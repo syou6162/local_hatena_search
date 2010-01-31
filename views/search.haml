@@ -1,0 +1,20 @@
+!!! XML 
+!!!  
+%html{html_attrs('ja')}
+  %head
+    %title 「#{@query}」の検索結果 - #{@config["title"]}
+    %link{:rel => :stylesheet, :href => "../stylesheet.css", :type => "text/css"}
+  %body
+    %div.main
+      %h1.title #{@config["title"]}
+      %div.left
+        - @entries.each do |entry|
+          #{entry.filename}
+          #{entry.content}
+      %div.right
+        %h3 検索
+        %form{:method => "GET", :action => "searchdiary"}
+          %input{:type => "text", :name => "query"}
+          %input{:type => "submit", :value => "検索"}
+
+
