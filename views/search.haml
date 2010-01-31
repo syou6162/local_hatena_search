@@ -8,9 +8,11 @@
     %div.main
       %h1.title #{@config["title"]}
       %div.left
+        %ul
         - @entries.each do |entry|
-          #{entry.filename}
-          #{entry.content}
+          %li
+            #{entry.year}年#{entry.month}月#{entry.day}日
+            %a{:href => "#{entry.year}#{entry.month}#{entry.day}/#{entry.point}"} #{entry.title}
       %div.right
         %h3 検索
         %form{:method => "GET", :action => "searchdiary"}

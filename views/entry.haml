@@ -1,0 +1,11 @@
+!!! XML 
+!!!  
+%html{html_attrs('ja')}
+  %head
+    %title #{@config["title"]}
+    %link{:rel => :stylesheet, :href => "../stylesheet.css", :type => "text/css"}
+  %body
+    %div.main
+      %h1.title 
+        #{@config["title"]}
+      #{@entry.content}
