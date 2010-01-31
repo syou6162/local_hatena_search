@@ -1,5 +1,7 @@
-title : Seeking for my unique color.
-hoge: fufuuaufaufa
-fuaa:
-  - aaa
-  - bbb
+title: Seeking for my unique color.
+base_dir: /Users/syou6162/hatena/syou6162/diary
+entries: entries.db
+excluding_files:
+  - config.txt
+  - cookie.txt
+  - touch.txt
