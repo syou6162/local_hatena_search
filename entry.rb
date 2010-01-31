@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 require "text/hatena"
+require "text/hatena/auto_link/http"
 require "suffix_array"
+
+module Text
+  class Hatena
+    class AutoLink
+      class HTTP < Scheme
+        # 毎回fetchしにいくと遅いのでurl自体をtitleに
+        def _get_page_title(url) 
+          return url
+        end
+      end
+    end
+  end
+end
 
 class Entry
   attr_reader :filename
