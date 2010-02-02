@@ -9,6 +9,7 @@ class Builder
   attr_reader :config
   def initialize(config)
     @config = config
+    @timestamp = timestamp
   end
   def convert_txt_filename_to_db_filename(txt_filename)
     @config["db_dir"] + "/" + txt_filename.split("/").last.sub("\.txt", "") + ".db"
@@ -16,6 +17,21 @@ class Builder
   def convert_db_filename_to_txt_filename(db_filename)
     @config["base_dir"] + "/" + db_filename.split("/").last.sub("\.db", "") + ".txt"
   end
+  def timestamp
+    # はてダラuserではなく、touch.txtが存在しない場合
+    touch_file = config["base_dir"] + "/" + "touch.txt"
+    return Time.now unless File.exist?(touch_file)
+    
+    f = File.open(touch_file, "r")
+    timestamp = f.read.first
+    f.close
+    if timestamp =~ /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/
+      year, month, day, hour, min, sec = $1, $2, $3, $4, $5, $6
+      timestamp = Time.local(year, month, day, hour, min, sec)
+    end
+    return timestamp
+  end
+
   def get_entries
     entries = {}
     Dir.glob("#{@config["db_dir"]}/*.db").reverse.each{|filename|
@@ -41,14 +57,7 @@ class Builder
   end
 
   def rebuild(entry)
-    f = File.open(config["base_dir"] + "/" + "touch.txt", "r")
-    timestamp = f.read.first
-    f.close
-    if timestamp =~ /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/
-      year, month, day, hour, min, sec = $1, $2, $3, $4, $5, $6
-      timestamp = Time.local(year, month, day, hour, min, sec)
-    end
-    return if (File::stat(entry.filename).mtime - timestamp) < 0 # 古くなかったら抜ける
+    return if (File::stat(entry.filename).mtime - @timestamp) < 0 # 古くなかったら抜ける
     
     db_filename = convert_txt_filename_to_db_filename(entry.filename)
     entries = Marshal.load(File.open(db_filename, "r"))
@@ -62,18 +71,9 @@ class Builder
   end
 
   def rebuild_all
-    f = File.open(config["base_dir"] + "/" + "touch.txt", "r")
-    timestamp = f.read.first
-    f.close
-
-    if timestamp =~ /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/
-      year, month, day, hour, min, sec = $1, $2, $3, $4, $5, $6
-      timestamp = Time.local(year, month, day, hour, min, sec)
-    end
-
     new_files = []
     Dir.glob("#{config["base_dir"]}/*.txt").each{|filename|
-      if (File::stat(filename).mtime - timestamp) > 0
+      if (File::stat(filename).mtime - @timestamp) > 0
         new_files.push filename
       end
     }
