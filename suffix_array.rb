@@ -1,3 +1,4 @@
+# ref http://d.hatena.ne.jp/ha-tan/20060416/1145125836
 class Array
   def bsearch(key, left = 0, right = self.size - 1, &comp)
     return -1 if left > right
