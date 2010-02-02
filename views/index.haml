@@ -15,4 +15,8 @@
         %form{:method => "GET", :action => "searchdiary"}
           %input{:type => "text", :name => "query"}
           %input{:type => "submit", :value => "検索"}
-
+        %h3 最新エントリ
+        %ul
+        - @entries.each do |entry|
+          %li
+            %a{:href => "#{entry.year}#{entry.month}#{entry.day}/#{entry.point}"} #{entry.title}
