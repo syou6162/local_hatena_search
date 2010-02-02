@@ -2,6 +2,7 @@
 require "text/hatena"
 require "suffix_array"
 require "fixed_text_hatena"
+require "hpricot"
 
 class Entry
   attr_reader :filename
@@ -26,7 +27,6 @@ class Entry
   end
  
   def convert_to_hatena(text)
-    puts @filename
     if @filename.split("/")[-1] =~ /(\d{4})-(\d{2})-(\d{2}).txt/
       @year, @month, @day = $1, $2, $3
     end
