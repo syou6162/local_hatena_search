@@ -43,6 +43,8 @@ class Builder
   end
 
   def build
+    Dir::mkdir config["db_dir"] unless File.exist?(config["db_dir"])
+    
     Dir.glob("#{config["base_dir"]}/*.txt").reverse.each{|filename|
       next if config["excluding_files"].include?(filename.split("/")[-1])
       entries = {}
