@@ -2,7 +2,6 @@
 
 require "text/hatena"
 require "suffix_array"
-require "fixed_text_hatena"
 require 'nokogiri'
 
 class Entry
