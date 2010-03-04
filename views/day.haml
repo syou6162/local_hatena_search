@@ -8,7 +8,8 @@
     %div.main
       %h1.title #{@config["title"]}
       %div.left
-        #{@entry.content}
+        - @entries.each do |entry|
+          #{entry.content}
       %div.right
         %h3 検索
         %form{:method => "GET", :action => "searchdiary"}
