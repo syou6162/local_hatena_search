@@ -34,7 +34,7 @@ end
 get '/searchdiary' do
   @config = config
   @entries = []
-  @query = params[:query]
+  @query = params[:query].force_encoding('UTF-8')
   entries.values.each{|hash|
     hash.values.each{|entry|
       if entry.search(@query) != -1
