@@ -4,7 +4,6 @@ require 'yaml'
 require 'sinatra'
 require 'haml'
 require 'sass'
-require 'pp'
 require 'date'
 require 'entry'
 require 'builder'
@@ -51,6 +50,26 @@ get '/searchdiary' do
   haml :search
 end
 
+get %r{(\d{4})(\d{2})(\d{2})/(\d{9,10})} do # 個別エントリー
+  @config = config
+  year, month, day, point = params[:captures]
+  entries.values.each{|hash|
+    hash.values.each{|entry|
+      if entry.year == year && entry.month == month && 
+          entry.day == day && entry.point == point
+        result = builder.rebuild(entry)
+        if result
+          entries[entry.filename] = result
+          @entry = result[entry.point]
+        else
+          @entry = entry
+        end
+      end
+    }
+  }
+  haml :entry
+end
+
 get %r{(\d{4})(\d{2})(\d{2})} do # 日付けのエントリーたち
   @config = config
   @entries = []
@@ -71,26 +90,6 @@ get %r{(\d{4})(\d{2})(\d{2})} do # 日付けのエントリーたち
     }
   }
   haml :day
-end
-
-get %r{(\d{4})(\d{2})(\d{2})/(\d{9,10})} do # 個別エントリー
-  @config = config
-  year, month, day, point = params[:captures]
-  entries.values.each{|hash|
-    hash.values.each{|entry|
-      if entry.year == year && entry.month == month && 
-          entry.day == day && entry.point == point
-        result = builder.rebuild(entry)
-        if result
-          entries[entry.filename] = result
-          @entry = result[entry.point]
-        else
-          @entry = entry
-        end
-      end
-    }
-  }
-  haml :entry
 end
 
 get '/stylesheet.css' do
