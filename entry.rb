@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+
 require "text/hatena"
 require "suffix_array"
 require "fixed_text_hatena"
-require "hpricot"
+require 'nokogiri'
 
 class Entry
   attr_reader :filename
@@ -30,12 +31,13 @@ class Entry
     if @filename.split("/")[-1] =~ /(\d{4})-(\d{2})-(\d{2}).txt/
       @year, @month, @day = $1, $2, $3
     end
-    parser = Text::Hatena.new({:permalink => "./#{@year}#{@month}#{@day}/#{@point}"})
+    parser = Text::Hatena.new({:ilevel => 0, 
+                                :permalink => "./#{@year}#{@month}#{@day}/#{@point}"})
     # amazonのところはうまくいかないので(画像が入ってるから?)
     text.gsub!(/((asin|ISBN):(.*?)):(title|detail|image)/){$1}
     parser.parse(text) 
     html = parser.html
-    source = Hpricot(html)
+    source = Nokogiri::HTML.parse(html)
     (source/"div.section>h3").each{|item|
       @title = item.inner_text
     }
@@ -51,7 +53,7 @@ class Entries
     @entries = make_entries
   end
   def make_entries
-    f = File.open(@filename, "r")
+    f = File.open(@filename, "r:utf-8")
     text = f.read
     f.close
 
